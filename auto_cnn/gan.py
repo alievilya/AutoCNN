@@ -52,9 +52,9 @@ class AutoCNN:
                  output_layer: Callable[[tf.keras.layers.Layer], tf.keras.layers.Layer] = None,
                  epoch_number: int = 1,
                  optimizer: OptimizerV2 = tf.keras.optimizers.Adam(),
-                 loss: Union[str, tf.keras.losses.Loss] = 'sparse_categorical_crossentropy',
-                 metrics: Iterable[str] = ('accuracy',),
-                 crossover_probability: float = .9,
+                 loss: Union[str, tf.keras.losses.Loss] = tf.keras.losses.sparse_categorical_crossentropy,#'categorical_crossentropy',
+                 metrics: Iterable[str] = ('accuracy', ),
+                 crossover_probability: float = .7,
                  mutation_probability: float = .2,
                  mutation_operation_distribution: Sequence[float] = None,
                  fitness_cache: str = 'fitness.json',
@@ -204,14 +204,14 @@ class AutoCNN:
         :param cnn: the CNN to find the fitness of
         """
 
-        try:
-            cnn.generate()
+        # try:
+        cnn.generate()
 
-            cnn.train(self.dataset, epochs=self.epoch_number)
-            loss, accuracy = cnn.evaluate(self.dataset)
-        except ValueError as e:
-            print(e)
-            accuracy = 0
+        cnn.train(self.dataset, epochs=self.epoch_number)
+        loss, accuracy = cnn.evaluate(self.dataset)
+        # except ValueError as e:
+        #     print(e)
+        #     accuracy = 0
 
         self.fitness[cnn.hash] = accuracy
 

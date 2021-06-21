@@ -116,7 +116,8 @@ def mnist_test():
     roc = RocCallback(training_data=(x_train, y_train),
                       validation_data=(x_test, y_test))
     # Sets the wanted parameters
-    a = AutoCNN(population_size=5, maximal_generation_number=4, dataset=data, epoch_number=5, extra_callbacks=[[roc]])
+    a = AutoCNN(population_size=5, maximal_generation_number=4, dataset=data, epoch_number=5,
+                )
 
     # Runs the algorithm until the maximal_generation_number has been reached
     best_cnn = a.run()

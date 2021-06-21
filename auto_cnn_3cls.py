@@ -19,8 +19,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from tensorflow.keras.callbacks import Callback
 # Sets the random seeds to make testing more consisent
-random.seed(42)
-tf.random.set_seed(42)
+random.seed(12)
+tf.random.set_seed(12)
 
 class RocCallback(Callback):
     def __init__(self,training_data,validation_data):
@@ -107,7 +107,7 @@ def load_patches():
 
 def run_autocnn():
     # Loads the data as test and train
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    # (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     (x_train, y_train), (x_test, y_test) = load_patches()
     x_train, x_test = x_train / 255.0, x_test / 255.0
 
@@ -118,7 +118,9 @@ def run_autocnn():
     roc = RocCallback(training_data=(x_train, y_train),
                       validation_data=(x_test, y_test))
     # Sets the wanted parameters
-    a = AutoCNN(population_size=3, maximal_generation_number=1, dataset=data, epoch_number=1, extra_callbacks=[[roc]])
+    a = AutoCNN(population_size=3, maximal_generation_number=5, dataset=data,
+                epoch_number=5, loss=tf.keras.losses.sparse_categorical_crossentropy,
+                metrics = ('accuracy', tf.keras.metrics.AUC(from_logits=True)))
 
     # Runs the algorithm until the maximal_generation_number has been reached
     best_cnn = a.run()

@@ -113,8 +113,8 @@ class CNN:
                  output_function: Callable[[tf.keras.layers.Layer], tf.keras.layers.Layer],
                  layers: Sequence[Layer],
                  optimizer: OptimizerV2 = None,
-                 loss: Union[str, tf.keras.losses.Loss] = 'sparse_categorical_crossentropy',
-                 metrics: Iterable[str] = ('accuracy',),
+                 loss: Union[str, tf.keras.losses.Loss] = tf.keras.losses.categorical_crossentropy,#'categorical_crossentropy',
+                 metrics: Iterable[str] = ('accuracy', tf.keras.metrics.AUC),
                  load_if_exist: bool = True,
                  extra_callbacks: Iterable[tf.keras.callbacks.Callback] = None,
                  logs_dir: str = './logs/train_data',
@@ -204,7 +204,9 @@ class CNN:
 
             self.model = tf.keras.Model(inputs=inputs, outputs=outputs)
             # self.model.summary()
-            self.model.compile(self.optimizer, loss=self.loss, metrics=self.metrics)
+            self.model.compile(self.optimizer, loss=self.loss, metrics=['accuracy',
+                                                                        ])
+                               #metrics=self.metrics)
 
             SkipLayer.GROUP_NUMBER = 1
         return self.model
