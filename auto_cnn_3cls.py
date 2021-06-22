@@ -7,6 +7,8 @@ import tensorflow as tf
 tf.get_logger().setLevel('INFO') # Removes Tensorflow debugging ouputs
 
 from auto_cnn.gan import AutoCNN
+from sklearn.metrics import roc_auc_score as roc_auc
+import statistics
 
 import random
 import numpy as np
@@ -64,10 +66,10 @@ def load_images(size=120, is_train=True):
     # with open('C:/Users/aliev/Documents/GitHub/nas-fedot/dataset_files/encoded_labels_10.json', 'r') as fp:
     #     encoded_labels = json.load(fp)
 
-    file_path='C:/Users/aliev/Documents/GitHub/nas-fedot/Generated_dataset'
-    with open('C:/Users/aliev/Documents/GitHub/nas-fedot/dataset_files/labels.json', 'r') as fp:
+    file_path='D:/PythonProjects/itmo/AutoCNN/Generated_dataset'
+    with open('D:/PythonProjects/itmo/AutoCNN/dataset_files/labels.json', 'r') as fp:
         labels_dict = json.load(fp)
-    with open('C:/Users/aliev/Documents/GitHub/nas-fedot/dataset_files/encoded_labels.json', 'r') as fp:
+    with open('D:/PythonProjects/itmo/AutoCNN/dataset_files/encoded_labels.json', 'r') as fp:
         encoded_labels = json.load(fp)
     Xarr = []
     Yarr = []
@@ -104,10 +106,20 @@ def load_patches():
 
     return (Xtrain, Ytrain), (Xval, Yval)
 
+def auc_f(truth, prediction):
+    roc_auc_values = []
+    for predict, true in zip(prediction, truth):
+        y_true = [0 for _ in range(3)]
+        y_true[true[0]] = 1
+        roc_auc_score = roc_auc(y_true=y_true,
+                                y_score=predict)
+        roc_auc_values.append(roc_auc_score)
+    roc_auc_value = statistics.mean(roc_auc_values)
+    return roc_auc_value
 
 def run_autocnn():
     # Loads the data as test and train
-    # (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     (x_train, y_train), (x_test, y_test) = load_patches()
     x_train, x_test = x_train / 255.0, x_test / 255.0
 

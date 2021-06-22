@@ -4,7 +4,8 @@ from typing import Iterable, Callable, Union, Sequence, Dict, Any, Tuple, List
 
 import tensorflow as tf
 from tensorflow.python.keras.optimizer_v2.optimizer_v2 import OptimizerV2
-
+from sklearn.metrics import roc_auc_score as roc_auc
+import statistics
 
 class Layer(ABC):
     @abstractmethod
@@ -221,6 +222,13 @@ class CNN:
         """
 
         return self.model.evaluate(data['x_test'], data['y_test'], batch_size=batch_size)
+
+    def predict_prob(self, data):
+        print('prediction')
+        pred = self.model.predict(data['x_test'])
+        roc_auc_score = roc_auc(y_true=data['y_test'],
+                                y_score=pred)
+        return roc_auc_score
 
     def train(self, data: Dict[str, Any], batch_size: int = 64, epochs: int = 1) -> None:
         """
